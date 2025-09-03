@@ -11,6 +11,13 @@ public class MyLinkedList<T> {
     private int size;
 
     /**
+     * Constructs an empty MyLinkedList.
+     */
+    public MyLinkedList() {
+        // empty constructor
+    }
+
+    /**
      * Internal class representing a node in the doubly linked list.
      *
      * @param <T> the type of data stored in the node
@@ -78,7 +85,7 @@ public class MyLinkedList<T> {
      *
      * @param index the position to insert the element
      * @param el    the element to add
-     * @throws IndexOutOfBoundsException if index < 0 or index > size
+     * @throws IndexOutOfBoundsException if index &lt; 0 or index &gt; size
      */
     public void add(int index, T el) {
         if (index < 0 || index > size) {
@@ -136,7 +143,7 @@ public class MyLinkedList<T> {
      *
      * @param index the index of the element
      * @return the element at the specified index
-     * @throws IndexOutOfBoundsException if index < 0 or index >= size
+     * @throws IndexOutOfBoundsException if index &lt; 0 or index &gt;= size
      */
     public T get(int index) {
         return getNode(index).data;
@@ -189,7 +196,7 @@ public class MyLinkedList<T> {
      *
      * @param index the index of the element to remove
      * @return the removed element
-     * @throws IndexOutOfBoundsException if index < 0 or index >= size
+     * @throws IndexOutOfBoundsException if index &lt; 0 or index &gt;= size
      */
     public T remove(int index) {
         if (index < 0 || index >= size) {
@@ -214,7 +221,7 @@ public class MyLinkedList<T> {
      *
      * @param index the index of the node
      * @return the node at the specified index
-     * @throws IndexOutOfBoundsException if index < 0 or index >= size
+     * @throws IndexOutOfBoundsException if index &lt; 0 or index &gt;= size
      */
     public Node<T> getNode(int index) {
         if (index < 0 || index >= size) {

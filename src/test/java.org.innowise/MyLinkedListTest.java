@@ -14,7 +14,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testAddFirstAndGetFirst(){
+    void testAddFirstAndGetFirst(){
         list.addFirst(10);
         assertEquals(10, list.getFirst());
         list.addFirst(20);
@@ -23,7 +23,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testAddLastAndGetLast(){
+    void testAddLastAndGetLast(){
         list.addLast(40);
         assertEquals(40, list.getLast());
         list.addLast(50);
@@ -32,7 +32,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testAddByIndex(){
+    void testAddByIndex(){
         list.addFirst(40);
         list.addFirst(20);
         list.addFirst(10);
@@ -42,7 +42,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testGetByIndex(){
+    void testGetByIndex(){
         list.addFirst(30);
         list.addFirst(20);
         list.addFirst(10);
@@ -52,7 +52,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testRemoveFirst(){
+    void testRemoveFirst(){
         list.addFirst(30);
         list.addFirst(20);
         list.addFirst(10);
@@ -63,7 +63,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testRemoveLast(){
+    void testRemoveLast(){
         list.addFirst(30);
         list.addFirst(20);
         list.addFirst(10);
@@ -74,7 +74,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testRemoveByIndex(){
+    void testRemoveByIndex(){
         list.addFirst(30);
         list.addFirst(20);
         list.addFirst(10);
@@ -85,7 +85,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    public void testSize(){
+    void testSize(){
         assertEquals(0, list.size());
         list.addFirst(30);
         list.addFirst(20);
