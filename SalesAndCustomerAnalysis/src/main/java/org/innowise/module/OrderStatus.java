@@ -1,12 +1,18 @@
 package org.innowise.module;
 
 /**
- * Enum representing the status of an order.
+ * Enum representing possible order statuses in the system.
+ * Tracks the progression of an order from creation to completion.
  */
 public enum OrderStatus {
-    NEW,            // Order is created but not yet processed
-    PROCESSING,     // Order is being prepared
-    SHIPPED,        // Order has been shipped
-    DELIVERED,      // Order has been delivered to the customer
-    CANCELLED       // Order was cancelled
+    /** Order has been created but not yet processed */
+    NEW,
+    /** Order is being prepared for shipment */
+    PROCESSING,
+    /** Order has been shipped to the customer */
+    SHIPPED,
+    /** Order has been successfully delivered to the customer */
+    DELIVERED,
+    /** Order has been cancelled */
+    CANCELLED
 }

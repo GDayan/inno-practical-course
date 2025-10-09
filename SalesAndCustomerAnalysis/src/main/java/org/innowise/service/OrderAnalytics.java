@@ -9,83 +9,93 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Utility class for analyzing orders in an online store.
- * Provides methods to calculate various business metrics using Java Stream API.
+ * Service class for analyzing order data and generating business metrics.
+ * Provides various analytical methods using Stream API for processing order collections.
  */
 public class OrderAnalytics {
 
     /**
-     * Returns a set of unique cities from which orders were placed.
+     * Retrieves a set of unique cities from which orders have been placed.
+     * Processes all orders and extracts customer cities, filtering out null values.
      *
-     * @param orders list of orders to analyze
-     * @return set of unique city names
+     * @param orders the list of orders to analyze
+     * @return a set of unique city names where orders originated from
      */
-    public static Set<String> getUniqueCities(List<Order> orders) {
+    public Set<String> getUniqueCities(List<Order> orders) {
         return orders.stream()
                 .map(order -> order.getCustomer().getCity())
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
     /**
-     * Calculates the total income from all completed (DELIVERED) orders.
-     * The income is calculated as the sum of (price * quantity) for each item in each delivered order.
+     * Calculates the total income from all completed (delivered) orders.
+     * Only considers orders with status DELIVERED and sums the total value of all items.
      *
-     * @param orders list of orders to analyze
-     * @return total income of delivered orders
+     * @param orders the list of orders to analyze
+     * @return the total income from delivered orders as a double value
      */
-    public static double getTotalIncome(List<Order> orders) {
+    public double getTotalIncomeFromCompletedOrders(List<Order> orders) {
         return orders.stream()
                 .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
                 .flatMap(order -> order.getItems().stream())
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .mapToDouble(item -> item.getQuantity() * item.getPrice())
                 .sum();
     }
 
     /**
-     * Finds the most popular product by total quantity sold across all orders.
+     * Finds the most popular product based on total quantity sold across all non-cancelled orders.
+     * Groups products by name and sums their quantities, then returns the product with highest total.
      *
-     * @param orders list of orders to analyze
-     * @return an Optional containing the name of the most popular product,
-     *         or Optional.empty() if there are no products
+     * @param orders the list of orders to analyze
+     * @return the name of the most popular product, or "No products found" if no products exist
      */
-    public static Optional<String> getMostPopularProduct(List<Order> orders) {
+    public String getMostPopularProduct(List<Order> orders) {
         return orders.stream()
+                .filter(order -> order.getStatus() != OrderStatus.CANCELLED)
                 .flatMap(order -> order.getItems().stream())
-                .collect(Collectors.groupingBy(OrderItem::getProductName, Collectors.summingInt(OrderItem::getQuantity)))
+                .collect(Collectors.groupingBy(
+                        OrderItem::getProductName,
+                        Collectors.summingInt(OrderItem::getQuantity)
+                ))
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey);
+                .map(Map.Entry::getKey)
+                .orElse("No products found");
     }
 
     /**
-     * Calculates the average check (average order value) for successfully delivered orders.
-     * The order value is calculated as the sum of (price * quantity) for all items in the order.
+     * Calculates the average order value for successfully delivered orders.
+     * Computes the total value of each delivered order and calculates the average across all delivered orders.
      *
-     * @param orders list of orders to analyze
-     * @return average order value of delivered orders, or 0.0 if no orders were delivered
+     * @param orders the list of orders to analyze
+     * @return the average order value for delivered orders, or 0.0 if no delivered orders exist
      */
-    public static double getAverageCheck(List<Order> orders) {
+    public double getAverageCheckForDeliveredOrders(List<Order> orders) {
         return orders.stream()
                 .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
                 .mapToDouble(order -> order.getItems().stream()
-                        .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                        .mapToDouble(item -> item.getQuantity() * item.getPrice())
                         .sum())
                 .average()
                 .orElse(0.0);
     }
 
     /**
-     * Returns a list of customers who have placed more than five orders.
+     * Identifies customers who have placed more than 5 orders.
+     * Groups orders by customer and counts the number of orders per customer,
+     * then filters for customers with order count greater than 5.
      *
-     * @param orders list of orders to analyze
-     * @return list of frequent customers (more than five orders)
+     * @param orders the list of orders to analyze
+     * @return a list of customers who have more than 5 orders
      */
-    public static List<Customer> getCustomersWithMoreThanFiveOrders(List<Order> orders) {
-        return orders.stream()
-                .collect(Collectors.groupingBy(Order::getCustomer, Collectors.counting()))
-                .entrySet().stream()
+    public List<Customer> getCustomersWithMoreThan5Orders(List<Order> orders) {
+        Map<Customer, Long> customerOrderCount = orders.stream()
+                .collect(Collectors.groupingBy(Order::getCustomer, Collectors.counting()));
+
+        return customerOrderCount.entrySet().stream()
                 .filter(entry -> entry.getValue() > 5)
                 .map(Map.Entry::getKey)
-                .toList();
+                .collect(Collectors.toList());
     }
 }

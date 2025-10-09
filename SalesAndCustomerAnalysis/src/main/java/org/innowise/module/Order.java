@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Represents an order placed by a customer.
+ * Represents an order in the online store.
+ * Contains information about the order, customer, items, and status.
  */
 public class Order {
     private String orderId;
@@ -14,15 +15,16 @@ public class Order {
     private OrderStatus status;
 
     /**
-     * Constructs an Order instance.
+     * Constructs a new Order with specified parameters.
      *
-     * @param orderId   unique identifier of the order
-     * @param orderDate date and time when the order was placed
-     * @param customer  customer who placed the order
-     * @param items     list of items in the order
-     * @param status    current status of the order
+     * @param orderId the unique identifier of the order
+     * @param orderDate the date and time when the order was placed
+     * @param customer the customer who placed the order
+     * @param items the list of items in the order
+     * @param status the current status of the order
      */
-    public Order(String orderId, LocalDateTime orderDate, Customer customer, List<OrderItem> items, OrderStatus status) {
+    public Order(String orderId, LocalDateTime orderDate, Customer customer,
+                 List<OrderItem> items, OrderStatus status) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.customer = customer;
@@ -30,23 +32,38 @@ public class Order {
         this.status = status;
     }
 
-    public String getOrderId() {
-        return orderId;
-    }
+    /**
+     * Returns the order identifier.
+     *
+     * @return the order ID
+     */
+    public String getOrderId() { return orderId; }
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
+    /**
+     * Returns the date and time when the order was placed.
+     *
+     * @return the order date
+     */
+    public LocalDateTime getOrderDate() { return orderDate; }
 
-    public Customer getCustomer() {
-        return customer;
-    }
+    /**
+     * Returns the customer who placed the order.
+     *
+     * @return the customer object
+     */
+    public Customer getCustomer() { return customer; }
 
-    public List<OrderItem> getItems() {
-        return items;
-    }
+    /**
+     * Returns the list of items in the order.
+     *
+     * @return the list of order items
+     */
+    public List<OrderItem> getItems() { return items; }
 
-    public OrderStatus getStatus() {
-        return status;
-    }
+    /**
+     * Returns the current status of the order.
+     *
+     * @return the order status
+     */
+    public OrderStatus getStatus() { return status; }
 }
