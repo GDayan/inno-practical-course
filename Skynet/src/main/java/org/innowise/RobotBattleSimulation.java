@@ -1,3 +1,4 @@
+
 package org.innowise;
 
 import java.util.concurrent.ExecutorService;
@@ -50,5 +51,3 @@ public class RobotBattleSimulation {
         }
     }
 }
-
-

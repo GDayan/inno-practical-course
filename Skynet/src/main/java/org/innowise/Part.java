@@ -1,8 +1,11 @@
 package org.innowise;
 
 /**
- * Enum representing the types of robot parts.
+ * Types of robot parts that can be produced
  */
 public enum Part {
-    HEAD, TORSO, HAND, FEET
+    HEAD,
+    TORSO,
+    HAND,
+    FEET
 }
