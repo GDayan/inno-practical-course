@@ -11,15 +11,15 @@ public class UserService implements InitializingBean {
     private UserRepository userRepository;
 
     public String getUserInfo() {
-        return userRepository.findUser() + " обработан через UserService";
+        return userRepository.findUser() + " processed via UserService";
     }
 
     public String getUserInfoById(int id) {
-        return userRepository.findUserById(id) + " обработан через UserService";
+        return userRepository.findUserById(id) + " processed via UserService";
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("UserService инициализирован! Все зависимости внедрены.");
+        System.out.println("UserService initialized! All dependencies have been injected.");
     }
 }
