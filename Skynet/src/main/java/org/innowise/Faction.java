@@ -81,14 +81,12 @@ public class Faction implements Runnable {
                 barrierDayEnd.await();
 
                 List<Part> grabbed = new ArrayList<>();
-                synchronized (storage) {
-                    int taken = Math.min(5, storage.size());
-                    for (int i = 0; i < taken; i++) {
-                        grabbed.add(storage.poll());
-                    }
-                }
 
-                for (Part p : grabbed) inventory.merge(p, 1, Integer::sum);
+                Part part;
+                while ((part = storage.poll()) != null) {
+                    grabbed.add(part);
+                    inventory.merge(part, 1, Integer::sum);
+                }
 
                 int builtToday = buildRobots();
 
