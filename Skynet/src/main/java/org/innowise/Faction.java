@@ -2,22 +2,20 @@ package org.innowise;
 
 import java.util.*;
 
-/**
- * Represents a faction that collects parts from a factory and assembles robots.
- * Implements {@link Runnable} to allow concurrent execution.
- */
 public class Faction implements Runnable {
     private final String name;
     private final Factory factory;
     private final Map<Part, Integer> inventory = new EnumMap<>(Part.class);
     private int robots = 0;
+    private static final int MAX_PARTS_PER_NIGHT = 5;
 
-    /**
-     * Constructs a new faction with the given name and factory.
-     *
-     * @param name    the name of the faction
-     * @param factory the factory from which the faction will take parts
-     */
+    private static final Map<Part, Integer> ROBOT_REQUIREMENTS = Map.of(
+            Part.HEAD, 1,
+            Part.TORSO, 1,
+            Part.HAND, 2,
+            Part.FEET, 2
+    );
+
     public Faction(String name, Factory factory) {
         this.name = name;
         this.factory = factory;
@@ -26,51 +24,83 @@ public class Faction implements Runnable {
         }
     }
 
-    /**
-     * Returns the number of robots assembled by this faction.
-     *
-     * @return the number of robots
-     */
     public int getRobots() {
         return robots;
     }
 
-    /**
-     * Returns the name of this faction.
-     *
-     * @return the faction name
-     */
     public String getName() {
         return name;
     }
 
+    public Map<Part, Integer> getInventory() {
+        return new EnumMap<>(inventory);
+    }
+
     /**
-     * Attempts to assemble robots using the parts in the inventory.
-     * The number of robots assembled is determined by the minimum count of available parts for each type.
-     * Parts used for assembly are removed from the inventory.
+     * Correct robot assembly logic
      */
     private void assembleRobots() {
-        int possibleRobots = Collections.min(inventory.values());
-        if (possibleRobots > 0) {
-            robots += possibleRobots;
-            for (Part p : Part.values()) {
-                inventory.put(p, inventory.get(p) - possibleRobots);
+        int maxPossibleRobots = Integer.MAX_VALUE;
+
+        for (Map.Entry<Part, Integer> requirement : ROBOT_REQUIREMENTS.entrySet()) {
+            Part part = requirement.getKey();
+            int required = requirement.getValue();
+            int available = inventory.get(part);
+
+            maxPossibleRobots = Math.min(maxPossibleRobots, available / required);
+        }
+
+        if (maxPossibleRobots > 0) {
+            for (Map.Entry<Part, Integer> requirement : ROBOT_REQUIREMENTS.entrySet()) {
+                Part part = requirement.getKey();
+                int required = requirement.getValue();
+                inventory.put(part, inventory.get(part) - (required * maxPossibleRobots));
             }
+
+            robots += maxPossibleRobots;
+            System.out.println("name + " built " + maxPossibleRobots + " robots! Total: " + robots);
         }
     }
 
     /**
-     * Executes the faction's daily actions:
-     * takes up to 5 parts from the factory, updates the inventory, and attempts to assemble robots.
-     * Prints the parts collected.
+     * Calculate which parts are needed most
      */
+    private Map<Part, Integer> calculateNeededParts() {
+        Map<Part, Integer> neededParts = new EnumMap<>(Part.class);
+        int totalPartsToTake = 0;
+
+        for (Part part : Part.values()) {
+            int required = ROBOT_REQUIREMENTS.get(part);
+            int current = inventory.get(part);
+
+            int deficit = required - (current % required);
+            if (deficit == required) deficit = 0;
+
+            if (deficit > 0 && totalPartsToTake < MAX_PARTS_PER_NIGHT) {
+                int canTake = Math.min(deficit, MAX_PARTS_PER_NIGHT - totalPartsToTake);
+                neededParts.put(part, canTake);
+                totalPartsToTake += canTake;
+            }
+        }
+
+        return neededParts;
+    }
+
     @Override
     public void run() {
-        List<Part> parts = factory.takeParts(5);
-        for (Part p : parts) {
-            inventory.put(p, inventory.get(p) + 1);
+        Map<Part, Integer> partsToCollect = calculateNeededParts();
+        Map<Part, Integer> collectedParts = factory.takeParts(partsToCollect);
+
+        for (Map.Entry<Part, Integer> entry : collectedParts.entrySet()) {
+            Part part = entry.getKey();
+            int count = entry.getValue();
+            inventory.put(part, inventory.get(part) + count);
         }
+
         assembleRobots();
-        System.out.println(name + " collected: " + parts);
+
+        if (!collectedParts.isEmpty()) {
+            System.out.println(name + " collected: " + collectedParts + " | Inventory: " + inventory);
+        }
     }
 }
